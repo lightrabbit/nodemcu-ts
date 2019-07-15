@@ -45,9 +45,23 @@ declare namespace wifi {
   }
   /** @compileMembersOnly */
   const enum SleepMode {
+    /** to keep the modem on at all times */
     NONE_SLEEP = 0,
+    /** to allow the CPU to power down under some circumstances */
     LIGHT_SLEEP = 1,
+    /** to power down the modem as much as possible */
     MODEM_SLEEP = 2
+  }
+  /**
+   * @compileMembersOnly
+   */
+  const enum StationStatus {
+    STA_IDLE = 0,
+    STA_CONNECTING = 1,
+    STA_WRONGPWD = 2,
+    STA_APNOTFOUND = 3,
+    STA_FAIL = 4,
+    STA_GOTIP = 5
   }
   /**
    * @see wifi.suspend()
@@ -366,6 +380,26 @@ declare namespace wifi {
      */
     function clearconfig(): boolean;
 
+    interface CurrentWifiConfig {
+      /** ssid of Access Point. */
+      ssid: string;
+
+      /** password to Access Point, `undefined` if no password was configured */
+      pwd?: string;
+
+      /**
+       * will return `true` if the station was configured specifically to connect to
+       * the AP with the matching `bssid`.
+       */
+      bssid_set: boolean;
+
+      /**
+       * If a connection has been made to the configured AP this field will contain
+       * the AP's MAC address. Otherwise "ff:ff:ff:ff:ff:ff" will be returned.
+       */
+      bssid: string;
+    }
+
     /** object containing configuration data for station */
     interface StationConfig {
       /** string which is less than 32 bytes. */
@@ -380,13 +414,6 @@ declare namespace wifi {
       pwd: string;
 
       /**
-       * - `true` to enable auto connect and connect to access point,
-       * hence with `auto=true` there's no need to call [`wifi.sta.connect()`](#wifistaconnect)
-       * - `false` to disable auto connect and remain disconnected from access point
-       */
-      auto?: boolean;
-
-      /**
        * string that contains the MAC address of the access point (optional)
        * - You can set BSSID if you have multiple access points with the same SSID.
        * - If you set BSSID for a specific SSID and would like to configure station to
@@ -398,6 +425,13 @@ declare namespace wifi {
        * 	 - "DE AD BE EF 7A C0"
        */
       bssid?: string;
+
+      /**
+       * - `true` to enable auto connect and connect to access point,
+       * hence with `auto=true` there's no need to call [`wifi.sta.connect()`](#wifistaconnect)
+       * - `false` to disable auto connect and remain disconnected from access point
+       */
+      auto?: boolean;
 
       /**
        * Save station configuration to flash.
@@ -441,12 +475,357 @@ declare namespace wifi {
      * It is not advised to assume that the WiFi is connected at any time during
      * initialization start-up. WiFi connection status should be validated either by
      * using a WiFi event callback or by polling the status on a timer.
+     * @see wifi.sta.clearconfig()
+     * @see wifi.sta.connect()
+     * @see wifi.sta.disconnect()
+     * @see wifi.sta.getapinfo()
      * @param config object containing configuration data for station
      * @returns result
      * - `true`  Success
      * - `false` Failure
+     * @example
+     * // connect to Access Point (DO NOT save config to flash)
+     * wifi.sta.config({
+     *   ssid: "NODE-AABBCC",
+     *   pwd: "password",
+     *   save: false
+     * });
+     *
+     * // connect to Access Point (DO save config to flash)
+     * wifi.sta.config({
+     *   ssid: "NODE-AABBCC",
+     *   pwd: "password",
+     *   save: true
+     * });
+     *
+     * // connect to Access Point with specific MAC address (DO save config to flash)
+     * wifi.sta.config({
+     *   ssid: "NODE-AABBCC",
+     *   pwd: "password",
+     *   bssid: "AA:BB:CC:DD:EE:FF"
+     * });
+     *
+     * // configure station but don't connect to Access point (DO save config to flash)
+     * wifi.sta.config({
+     *   ssid: "NODE-AABBCC",
+     *   pwd: "password",
+     *   auto: false
+     * });
      */
     function config(config: StationConfig): boolean;
+
+    /**
+     * Connects to the configured AP in station mode. You only ever need to call this if
+     * auto-connect was disabled in [`wifi.sta.config()`](#wifistaconfig).
+     * @see wifi.sta.disconnect()
+     * @see wifi.sta.config()
+     * @param connected_cb Callback to execute when station is connected to an access point. (Optional)
+     */
+    function connect(
+      connected_cb?: (this: void, arg: eventmon.StaConnectedArg) => void
+    ): void;
+
+    /**
+     * Disconnects from AP in station mode.
+     * ### Note
+     * Please note that disconnecting from Access Point does not reduce power consumption.
+     * If power saving is your goal, please refer to the description for `wifi.NULLMODE`
+     * in the function [`wifi.setmode()`](#wifisetmode) for more details.
+     * @see wifi.sta.config()
+     * @see wifi.sta.connect()
+     * @param disconnected_cb
+     */
+    function disconnect(
+      disconnected_cb?: (this: void, arg: eventmon.StaDisconnectedArg) => void
+    ): void;
+
+    interface GetAPConfig {
+      /** SSID == undefined, don't filter SSID */
+      ssid?: string;
+      /** BSSID == undefined, don't filter BSSID */
+      bssid?: string;
+      /** channel == 0, scan all channels, otherwise scan set channel (default is 0) */
+      channel?: number;
+      /** show_hidden == 1, get info for router with hidden SSID (default is 0) */
+      show_hidden?: 0 | 1;
+    }
+
+    /**
+     * old format (SSID : Authmode, RSSI, BSSID, Channel), any duplicate SSIDs will be discarded
+     */
+    interface OldAPList {
+      [ssid: string]: string;
+    }
+    /**
+     * new format (BSSID : SSID, RSSI, Authmode, Channel)
+     */
+    interface APList {
+      [bssid: string]: string;
+    }
+    /**
+     * Scans AP list as a Lua table into callback function.
+     * @see wifi.sta.config()
+     * @see wifi.sta.connect()
+     * @param callback
+     * @todo supply example
+     */
+    function getap(callback: (this: void, aplist: OldAPList) => void): void;
+    function getap(
+      format: 0,
+      callback: (this: void, aplist: OldAPList) => void
+    ): void;
+    function getap(
+      format: 1,
+      callback: (this: void, aplist: APList) => void
+    ): void;
+    function getap(
+      cfg: GetAPConfig,
+      format: 0,
+      callback: (this: void, aplist: OldAPList) => void
+    ): void;
+    function getap(
+      cfg: GetAPConfig,
+      format: 1,
+      callback: (this: void, aplist: APList) => void
+    ): void;
+
+    /**
+     * Get index of current Access Point stored in AP cache.
+     * @see wifi.sta.getapindex()
+     * @see wifi.sta.getapinfo()
+     * @see wifi.sta.changeap()
+     * @returns index of currently selected Access Point. (Range:1-5)
+     * @example
+     * print("the index of the currently selected AP is: " + wifi.sta.getapindex())
+     */
+    function getapindex(): number;
+
+    interface APInfo {
+      /** quantity of APs returned */
+      qty: number;
+      /**
+       * index of AP. (the index corresponds to index used by [`wifi.sta.changeap()`]
+       * (#wifistachangeap) and [`wifi.sta.getapindex()`](#wifistagetapindex))
+       */
+      [index: number]: {
+        /** ssid of Access Point */
+        ssid: string;
+        /** password for Access Point, `undefined` if no password was configured */
+        pwd?: string;
+        /**
+         * MAC address of Access Point
+         * - `nil` will be returned if no MAC address was configured during station configuration.
+         */
+        bssid?: string;
+      };
+    }
+    /**
+     * Get information of APs cached by ESP8266 station.
+     *
+     * ### Note
+     * Any Access Points configured with save disabled `wifi.sta.config({save=false})`
+     * will populate this list (appearing to overwrite APs stored in flash) until restart.
+     * @see wifi.sta.getapindex()
+     * @see wifi.sta.setaplimit()
+     * @see wifi.sta.changeap()
+     * @see wifi.sta.config()
+     * @example
+     * // print stored access point info(formatted)
+     * {
+     *   const x = wifi.sta.getapinfo();
+     *   const y = wifi.sta.getapindex();
+     *   print("\n Number of APs stored in flash:", x.qty);
+     *   print(
+     *     "  %-6s %-32s %-64s %-18s".format("index:", "SSID:", "Password:", "BSSID:")
+     *   );
+     *   for (let i = 1; i <= x.qty; i++) {
+     *     print(
+     *       " %s%-6d %-32s %-64s %-18s".format(
+     *         i === y ? ">" : " ",
+     *         i,
+     *         x[i].ssid,
+     *         x[i].pwd || "<NIL>",
+     *         x[i].bssid || "<NIL>"
+     *       )
+     *     );
+     *   }
+     * }
+     */
+    function getapinfo(): APInfo;
+
+    /**
+     * Gets the broadcast address in station mode.
+     * @see wifi.sta.getip()
+     * @returns broadcast address as string, for example "192.168.0.255",
+     * returns `nil` if IP address = "0.0.0.0".
+     */
+    function getbroadcast(): string | null;
+
+    /**
+     * Gets the WiFi station configuration in a object.
+     * @param returnObject returns data in a object
+     * @example
+     * var staConfig = wifi.sta.getconfig(true);
+     * print(
+     *   '\tCurrent station config\n\tssid:"%s"\tpassword:"%s"\n\tbssid:"%s"\tbssid_set:%s'.format(
+     *     staConfig.ssid,
+     *     staConfig.pwd,
+     *     staConfig.bssid,
+     *     staConfig.bssid_set ? "true" : "false"
+     *   )
+     * );
+     */
+    function getconfig(returnObject: true): CurrentWifiConfig;
+    /**
+     * Gets the WiFi station configuration in the old format.
+     * @param returnObject returns data in a table
+     * @tupleReturn
+     * @returns ssid, password, bssid_set, bssid, if `bssid_set`
+     * is equal to `0` then `bssid` is irrelevant
+     * @example
+     * // Get current Station configuration (OLD FORMAT)
+     * var [ssid, password, bssid_set, bssid] = wifi.sta.getconfig();
+     * print(`Current Station configuration:
+     * SSID : ${ssid}
+     * Password  : ${password}
+     * BSSID_set  : ${bssid_set}
+     * BSSID: ${bssid}
+     * `);
+     */
+    function getconfig(
+      returnObject?: false
+    ): [string, string | undefined, number, string];
+
+    /**
+     * Gets the default WiFi station configuration stored in flash in a object.
+     * @see wifi.sta.getconfig()
+     * @param returnObject
+     */
+    function getdefaultconfig(returnObject: true): CurrentWifiConfig;
+    /**
+     * Gets the default WiFi station configuration stored in flash in the old format.
+     * @see wifi.sta.getconfig()
+     * @param returnObject
+     */
+    function getdefaultconfig(
+      returnObject?: false
+    ): [string, string | undefined, number, string];
+
+    /**
+     * Gets current station hostname.
+     * @returns currently configured hostname
+     * @example
+     * print(`Current hostname is: "${wifi.sta.gethostname()}"`);
+     */
+    function gethostname(): string;
+
+    /**
+     * Gets IP address, netmask, and gateway address in station mode.
+     * @tupleReturn
+     * @returns IP address, netmask, gateway address as string, for example "192.168.0.111".
+     * Returns `nil` if IP = "0.0.0.0".
+     * @example
+     * // print current IP address, netmask, gateway
+     * print(wifi.sta.getip());
+     * // 192.168.0.111  255.255.255.0  192.168.0.1
+     * var [ip] = wifi.sta.getip();
+     * print(ip);
+     * // 192.168.0.111
+     * var [ip, nm] = wifi.sta.getip();
+     * print(nm);
+     * // 255.255.255.0
+     */
+    function getip(): [string, string, string];
+
+    /**
+     * Gets MAC address in station mode.
+     * @see wifi.sta.getip()
+     * @returns MAC address as string e.g. "18:fe:34:a2:d7:34"
+     */
+    function getmac(): string;
+
+    /**
+     * Get RSSI(Received Signal Strength Indicator) of the Access Point which ESP8266
+     * station connected to.
+     * @returns rssi value
+     * - If station is connected to an access point, `rssi` is returned.
+     * - If station is not connected to an access point, `nil` is returned.
+     * @example
+     * RSSI=wifi.sta.getrssi();
+     * print("RSSI is", RSSI);
+     */
+    function getrssi(): number;
+
+    /**
+     * Set Maximum number of Access Points to store in flash.
+     * - This value is written to flash
+     *
+     * ### Attention
+     * New setting will not take effect until restart.
+     *
+     * ### Note
+     * If 5 Access Points are stored and AP limit is set to 4, the AP at index 5 will
+     * remain until [`node.restore()`](node.md#noderestore) is called or AP limit is
+     * set to 5 and AP is overwritten.
+     * @see wifi.sta.getapinfo()
+     * @param qty Quantity of Access Points to store in flash. Range: 1-5 (Default: 1)
+     * @returns `true` Success, `false` Failure
+     * @example
+     * wifi.sta.setaplimit(5);
+     */
+    function setaplimit(qty: number): boolean;
+
+    /**
+     * Sets station hostname.
+     * @param hostname must only contain letters, numbers and hyphens('-') and be 32
+     * characters or less with first and last character being alphanumeric
+     * @returns `true` Success, `false` Failure
+     * @example
+     * if (wifi.sta.sethostname("NodeMCU") === true) {
+     *   print("hostname was successfully changed");
+     * } else {
+     *   print("hostname was not changed");
+     * }
+     */
+    function sethostname(hostname: string): boolean;
+
+    interface IPConfig {
+      ip: string;
+      netmask: string;
+      gateway: string;
+    }
+    /**
+     * Sets IP address, netmask, gateway address in station mode.
+     * @see wifi.sta.setmac()
+     * @param cfg object contain IP address, netmask, and gateway
+     * @returns `true` if success, `false` otherwise
+     */
+    function setip(cfg: IPConfig): boolean;
+
+    /**
+     * Sets MAC address in station mode.
+     * @see wifi.sta.setip()
+     * @param mac MAC address in string e.g. "DE:AD:BE:EF:7A:C0"
+     * @example
+     * print(wifi.sta.setmac("DE:AD:BE:EF:7A:C0"));
+     */
+    function setmac(mac: string): boolean;
+
+    /**
+     * Configures the WiFi modem sleep type to be used while station
+     * is connected to an Access Point.
+     * ### Note
+     * Does not apply to `wifi.SOFTAP`, `wifi.STATIONAP` or `wifi.NULLMODE`.
+     * @param typeWanted target sleep type
+     * @returns The actual sleep mode set.
+     */
+    function sleeptype(typeWanted: SleepMode): SleepMode;
+
+    /**
+     * Gets the current status in station mode.
+     * @returns current state
+     */
+    function status(): StationStatus;
   }
 
   /**
