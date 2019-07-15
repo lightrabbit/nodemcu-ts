@@ -7,9 +7,11 @@
 declare namespace node {
   type GPIO_PIN = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
-  const CPU80MHZ = 80;
-  const CPU160MHZ = 160;
-  type CPU_FREQ = typeof CPU80MHZ | typeof CPU160MHZ;
+  /** @compileMembersOnly */
+  const enum CpuFreq {
+    CPU80MHZ = 80,
+    CPU160MHZ = 160,
+  }
 
   /**
    * Returns the boot reason and extended reset info.
@@ -274,14 +276,16 @@ declare namespace node {
    * Change the working CPU Frequency.
    * @param speed
    */
-  function setcpufreq(speed: CPU_FREQ): CPU_FREQ;
+  function setcpufreq(speed: CpuFreq): CpuFreq;
 
-  const INT_UP = 1;
-  const INT_DOWN = 2;
-  const INT_BOTH = 3;
-  const INT_LOW = 4;
-  const INT_HIGH = 5;
-  type INT_TYPE = typeof INT_UP | typeof INT_DOWN | typeof INT_BOTH | typeof INT_LOW | typeof INT_HIGH;
+  const enum InterruptType {
+    INT_UP = 1,
+    INT_DOWN = 2,
+    INT_BOTH = 3,
+    INT_LOW = 4,
+    INT_HIGH = 5,
+  }
+
   interface ISleepConfig {
     /**
      * 1-12, pin to attach wake interrupt to. Note that pin 0(GPIO 16) does not support interrupts.
@@ -297,9 +301,9 @@ declare namespace node {
      *   * `node.INT_LOW`  Low level
      *   * `node.INT_HIGH` High level
      */
-    int_type?: INT_TYPE;
+    int_type?: InterruptType;
     /** Callback to execute when WiFi wakes from suspension. (Optional) */
-    resume_cb?: ()=>void;
+    resume_cb?: () => void;
     /**
      * preserve current WiFi mode through node sleep. (Optional, Default: true)
      * * If `true`, Station and StationAP modes will automatically reconnect to previously configured Access Point when NodeMCU resumes.
@@ -327,5 +331,5 @@ declare namespace node {
    *   preserve_mode: false
    * });
    */
-  function sleep(cfg: ISleepConfig):void;
+  function sleep(cfg: ISleepConfig): void;
 }

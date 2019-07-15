@@ -1,9 +1,10 @@
 /** @noSelf */
 declare namespace net {
-  const TCP = 1;
-  const UDP = 2;
+  const enum SocketType {
+    TCP = 1,
+    UDP = 2,
+  }
 
-  type SocketType = typeof TCP | typeof UDP;
   type EventCallback<T> = (this: void, sck: T) => void;
   type DnsEventCallback<T> = (this: void, sck: T, ip: string) => void;
   type ErrorEventCallback<T> = (this: void, sck: T, err: number) => void;
@@ -40,7 +41,7 @@ declare namespace net {
    * net.createConnection(net.TCP, 0)
    * @todo tls socket with secure
    */
-  function createConnection(type?: typeof TCP, secure?: 0 | 1): Socket;
+  function createConnection(type?: SocketType.TCP, secure?: 0 | 1): Socket;
 
   /**
    * Creates a server.
@@ -53,7 +54,7 @@ declare namespace net {
    * @param timeout for a TCP server timeout is 1~28'800 seconds,
    * 30 sec by default (for an inactive client to be disconnected)
    */
-  function createServer(type?: typeof TCP, timeout?: number): Server;
+  function createServer(type?: SocketType.TCP, timeout?: number): Server;
 
   /**
    * Creates an UDP socket.
@@ -199,10 +200,10 @@ declare namespace net {
      * });
      * srv.connect(80, "httpbin.org");
      */
-    on(event: "connection", cb: EventCallback<this> | null): void;
-    on(event: "reconnection", cb: ErrorEventCallback<this> | null): void;
-    on(event: "disconnection", cb: ErrorEventCallback<this> | null): void;
-    on(event: "sent", cb: EventCallback<this> | null): void;
+    on(event: 'connection', cb: EventCallback<this> | null): void;
+    on(event: 'reconnection', cb: ErrorEventCallback<this> | null): void;
+    on(event: 'disconnection', cb: ErrorEventCallback<this> | null): void;
+    on(event: 'sent', cb: EventCallback<this> | null): void;
     /**
      * Register callback functions for receive data event.
      *
@@ -224,7 +225,7 @@ declare namespace net {
      *   }
      * });
      */
-    on(event: "receive", cb: TCPReceiveEventCallback | null): void;
+    on(event: 'receive', cb: TCPReceiveEventCallback | null): void;
 
     /**
      * Sends data to remote peer.
@@ -327,9 +328,9 @@ declare namespace net {
      * @param event string, which can be `receive` or `sent` or `dns`
      * @param cb callback function. Can be `undefined` to remove callback.
      */
-    on(event: "sent", cb: EventCallback<this> | null): void;
-    on(event: "receive", cb: UDPReceiveEventCallback | null): void;
-    on(event: "dns", cb: DnsEventCallback<this> | null): void;
+    on(event: 'sent', cb: EventCallback<this> | null): void;
+    on(event: 'receive', cb: UDPReceiveEventCallback | null): void;
+    on(event: 'dns', cb: DnsEventCallback<this> | null): void;
 
     /**
      * Sends data to specific remote peer.
@@ -425,6 +426,6 @@ declare namespace net {
      * @param dnsIndex which DNS server to set (range 0~1). Hence, it supports max. 2 servers.
      * @see net.dns.getdnsserver()
      */
-    function setdnsserver(dnsIpAddr:string, dnsIndex: 0|1):void;
+    function setdnsserver(dnsIpAddr: string, dnsIndex: 0 | 1): void;
   }
 }
