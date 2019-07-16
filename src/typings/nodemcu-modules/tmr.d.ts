@@ -1,3 +1,4 @@
+// tslint:disable: no-namespace
 /**
  * The tmr module allows access to simple timers, the system counter and uptime.
  *
@@ -35,7 +36,7 @@ declare namespace tmr {
    * });
    * mytimer.start()
    */
-  function create(): Timer;
+  function create(): ITimer;
   /**
    * Busyloops the processor for a specified number of microseconds.
    *
@@ -99,7 +100,7 @@ declare namespace tmr {
    */
   function wdclr(): void;
 
-  interface Timer {
+  interface ITimer {
     /**
      * This is a convenience function combining [`Timer.register()`] and
      * [`Timer.start()`] into a single call.
@@ -122,7 +123,7 @@ declare namespace tmr {
     alarm(
       intervalMs: number,
       mode: Mode,
-      callback: (this: void, timer: Timer) => void
+      callback: (this: void, timer: ITimer) => void
     ): boolean;
 
     /**
@@ -160,7 +161,7 @@ declare namespace tmr {
     register(
       intervalMs: number,
       mode: Mode,
-      callback: (this: void, timer: Timer) => void
+      callback: (this: void, timer: ITimer) => void
     ): void;
 
     /**

@@ -1,3 +1,4 @@
+// tslint:disable: no-namespace
 /** @noSelf */
 declare namespace net {
   /** @compileMembersOnly */
@@ -11,12 +12,12 @@ declare namespace net {
   type ErrorEventCallback<T> = (this: void, sck: T, err: number) => void;
   type TCPReceiveEventCallback = (
     this: void,
-    sck: Socket,
+    sck: ISocket,
     data: string
   ) => void;
   type UDPReceiveEventCallback = (
     this: void,
-    sck: UdpSocket,
+    sck: IUdpSocket,
     data: string,
     port: number,
     ip: string
@@ -42,7 +43,7 @@ declare namespace net {
    * net.createConnection(net.TCP, 0)
    * @todo tls socket with secure
    */
-  function createConnection(type?: SocketType.TCP, secure?: 0 | 1): Socket;
+  function createConnection(type?: SocketType.TCP, secure?: 0 | 1): ISocket;
 
   /**
    * Creates a server.
@@ -55,12 +56,12 @@ declare namespace net {
    * @param timeout for a TCP server timeout is 1~28'800 seconds,
    * 30 sec by default (for an inactive client to be disconnected)
    */
-  function createServer(type?: SocketType.TCP, timeout?: number): Server;
+  function createServer(type?: SocketType.TCP, timeout?: number): IServer;
 
   /**
    * Creates an UDP socket.
    */
-  function createUDPSocket(): UdpSocket;
+  function createUDPSocket(): IUdpSocket;
 
   /**
    * Join multicast group.
@@ -78,7 +79,7 @@ declare namespace net {
    */
   function multicastLeave(ifIp: string, multicastIp: string): void;
 
-  interface Server {
+  interface IServer {
     /**
      * Closes the server.
      * @example
@@ -110,13 +111,14 @@ declare namespace net {
      *   });
      * }
      */
-    listen(connectionHandler: EventCallback<Socket>): void;
-    listen(ip: string, connectionHandler: EventCallback<Socket>): void;
-    listen(port: number, connectionHandler: EventCallback<Socket>): void;
+    listen(connectionHandler: EventCallback<ISocket>): void;
+    listen(ip: string, connectionHandler: EventCallback<ISocket>): void;
+    // tslint:disable-next-line: unified-signatures
+    listen(port: number, connectionHandler: EventCallback<ISocket>): void;
     listen(
       port: number,
       ip: string,
-      connectionHandler: EventCallback<Socket>
+      connectionHandler: EventCallback<ISocket>
     ): void;
 
     /**
@@ -127,7 +129,7 @@ declare namespace net {
     getaddr(): [number, string] | [undefined, undefined];
   }
 
-  interface Socket {
+  interface ISocket {
     /**
      * Closes socket.
      */
@@ -201,10 +203,11 @@ declare namespace net {
      * });
      * srv.connect(80, "httpbin.org");
      */
-    on(event: "connection", cb: EventCallback<this> | null): void;
-    on(event: "reconnection", cb: ErrorEventCallback<this> | null): void;
-    on(event: "disconnection", cb: ErrorEventCallback<this> | null): void;
-    on(event: "sent", cb: EventCallback<this> | null): void;
+    on(event: "connection" | "sent", cb: EventCallback<this> | null): void;
+    on(
+      event: "reconnection" | "disconnection",
+      cb: ErrorEventCallback<this> | null
+    ): void;
     /**
      * Register callback functions for receive data event.
      *
@@ -287,6 +290,7 @@ declare namespace net {
      * sk.connect(80, '192.168.1.1');
      * sk.ttl(1) // restrict frames to single subnet
      */
+    // tslint:disable-next-line: unified-signatures
     ttl(ttl: number): number;
 
     /**
@@ -307,7 +311,7 @@ declare namespace net {
    * - UDP sockets do not have a `connect` function. Remote IP and port thus need to be defined in [`send()`](#netudpsocketsend).
    * - UDP socket's `receive` callback receives port/ip after the `data` argument.
    */
-  interface UdpSocket {
+  interface IUdpSocket {
     /**
      * Closes socket.
      */
@@ -318,10 +322,8 @@ declare namespace net {
      * @param port port number, can be omitted (random port will be chosen)
      * @param ip IP address string, can be omitted
      */
-    listen(): void;
-    listen(ip: string): void;
-    listen(port: number): void;
-    listen(port: number, ip: string): void;
+    listen(ip?: string): void;
+    listen(port: number, ip?: string): void;
 
     /**
      * Register callback functions for specific events.
@@ -382,6 +384,7 @@ declare namespace net {
      * sk.connect(80, '192.168.1.1');
      * sk.ttl(1) // restrict frames to single subnet
      */
+    // tslint:disable-next-line: unified-signatures
     ttl(ttl: number): number;
   }
 

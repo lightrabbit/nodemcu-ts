@@ -1,3 +1,4 @@
+// tslint:disable: no-namespace
 /**
  * This module provides access to the GPIO (General Purpose Input/Output) subsystem.
  *
@@ -120,7 +121,7 @@ declare namespace gpio {
     none = "none"
   }
   type TrigTypeConst = "up" | "down" | "both" | "low" | "high" | "none";
-  interface TrigCallback {
+  type TrigCallback =
     /**
      * @param level The level of the specified pin at the interrupt
      * @param when The timestamp of the event. This is in microseconds and has the same base as
@@ -133,8 +134,8 @@ declare namespace gpio {
      * are digitally generated. The previous callback function will be used if the function is
      * omitted.
      */
-    (this: void, level: Value, when: number, eventcount: number): void;
-  }
+    (this: void, level: Value, when: number, eventcount: number) => void;
+
   /**
    * Establish or clear a callback function to run on interrupt for a pin.
    *
@@ -157,5 +158,9 @@ declare namespace gpio {
    *   trig(pin, "down", pin1cb);
    * }
    */
-  function trig(pin: INT_PIN, type?: TrigType | TrigTypeConst, callback?: TrigCallback): void;
+  function trig(
+    pin: INT_PIN,
+    type?: TrigType | TrigTypeConst,
+    callback?: TrigCallback
+  ): void;
 }

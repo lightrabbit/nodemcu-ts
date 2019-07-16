@@ -1,3 +1,4 @@
+// tslint:disable: no-namespace
 /**
  * @see https://nodemcu.readthedocs.io/en/master/modules/wifi/
  * @noSelf
@@ -99,11 +100,12 @@ declare namespace wifi {
     STATIONAP = 3
   }
 
-  interface CountryInfo {
+  interface ICountryInfo {
     /**
-     * Country code, 2 character string containing the country code
-     * (a list of country codes can be found [here](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements)).
-     * (Default:"CN") */
+     * Country code, 2 character string containing the country code (a list of
+     * country codes can be found [here](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements)).
+     * (Default:"CN")
+     */
     country: string;
     /** Starting channel (range:1-14). (Default:1) */
     start_ch: number;
@@ -117,7 +119,7 @@ declare namespace wifi {
     policy: CountryPolicy;
   }
 
-  interface SuspendConfig {
+  interface ISuspendConfig {
     /**
      * Suspend duration in microseconds(μs). If a suspend duration of `0` is specified,
      * suspension will be indefinite (Range: 0 or 50000 - 268435454 μs (0:4:28.000454))
@@ -153,7 +155,7 @@ declare namespace wifi {
    *   print(i, info[i as keyof typeof info]);
    * }
    */
-  function getcountry(): CountryInfo;
+  function getcountry(): ICountryInfo;
 
   /**
    * Gets default WiFi operation mode.
@@ -175,12 +177,6 @@ declare namespace wifi {
    * @see wifi.setphymode()
    */
   function getphymode(): PhysicalMode;
-
-  /**
-   *
-   * @returns current setting
-   */
-  function nullmodesleep(): boolean;
 
   /**
    * Configures whether or not WiFi automatically goes to sleep in NULL_MODE.
@@ -239,7 +235,7 @@ declare namespace wifi {
    * // Set defaults
    * wifi.setcountry({});
    */
-  function setcountry(countryInfo: CountryInfo | {}): boolean;
+  function setcountry(countryInfo: ICountryInfo | {}): boolean;
 
   /**
    * Configures the WiFi mode to use. NodeMCU can run in one of four WiFi modes:
@@ -332,7 +328,7 @@ declare namespace wifi {
    * @see node.sleep()
    * @see node.dsleep()
    */
-  function suspend(config: SuspendConfig): void;
+  function suspend(config: ISuspendConfig): void;
   /**
    * Get current WiFi suspension state
    * @returns current states
@@ -356,7 +352,7 @@ declare namespace wifi {
      * Select Access Point from list returned by `wifi.sta.getapinfo()`
      * @see wifi.sta.getapinfo()
      * @see wifi.sta.getapindex()
-     * @param ap_index Index of Access Point you would like to change to. (Range:1-5)
+     * @param apIndex Index of Access Point you would like to change to. (Range:1-5)
      * - Corresponds to index used by [`wifi.sta.getapinfo()`](#wifistagetapinfo)
      * and [`wifi.sta.getapindex()`](#wifistagetapindex)
      * @returns result of select AP
@@ -365,7 +361,7 @@ declare namespace wifi {
      * @example
      * wifi.sta.changeap(4);
      */
-    function changeap(ap_index: number): boolean;
+    function changeap(apIndex: number): boolean;
 
     /**
      * Clears the currently saved WiFi station configuration, erasing it from the flash.
@@ -380,7 +376,7 @@ declare namespace wifi {
      */
     function clearconfig(): boolean;
 
-    interface CurrentWifiConfig {
+    interface ICurrentWifiConfig {
       /** ssid of Access Point. */
       ssid: string;
 
@@ -401,7 +397,7 @@ declare namespace wifi {
     }
 
     /** object containing configuration data for station */
-    interface StationConfig {
+    interface IStationConfig {
       /** string which is less than 32 bytes. */
       ssid: string;
 
@@ -443,30 +439,30 @@ declare namespace wifi {
       /**
        * Callback to execute when station is connected to an access point. (Optional)
        */
-      connected_cb?: (this: void, arg: eventmon.StaConnectedArg) => void;
+      connected_cb?: (this: void, arg: eventmon.IStaConnectedArg) => void;
 
       /**
        * Callback to execute when station is disconnected from an access point. (Optional)
        */
-      disconnected_cb?: (this: void, arg: eventmon.StaDisconnectedArg) => void;
+      disconnected_cb?: (this: void, arg: eventmon.IStaDisconnectedArg) => void;
 
       /**
        * Callback to execute when the access point has changed authorization mode. (Optional)
        */
       authmode_change_cb?: (
         this: void,
-        arg: eventmon.StaAuthmodeChangeArg
+        arg: eventmon.IStaAuthmodeChangeArg
       ) => void;
 
       /**
        * Callback to execute when the station received an IP address from the access point. (Optional)
        */
-      got_ip_cb?: (this: void, arg: eventmon.StaGotIpArg) => void;
+      got_ip_cb?: (this: void, arg: eventmon.IStaGotIpArg) => void;
 
       /**
        * Station DHCP request has timed out. (Optional)
        */
-      dhcp_timeout_cb?: (this: void, arg: eventmon.StaDhcpTimeoutArg) => void;
+      dhcp_timeout_cb?: (this: void, arg: eventmon.IStaDhcpTimeoutArg) => void;
     }
     /**
      * Sets the WiFi station configuration.
@@ -512,17 +508,17 @@ declare namespace wifi {
      *   auto: false
      * });
      */
-    function config(config: StationConfig): boolean;
+    function config(config: IStationConfig): boolean;
 
     /**
      * Connects to the configured AP in station mode. You only ever need to call this if
      * auto-connect was disabled in [`wifi.sta.config()`](#wifistaconfig).
      * @see wifi.sta.disconnect()
      * @see wifi.sta.config()
-     * @param connected_cb Callback to execute when station is connected to an access point. (Optional)
+     * @param connectedCb Callback to execute when station is connected to an access point. (Optional)
      */
     function connect(
-      connected_cb?: (this: void, arg: eventmon.StaConnectedArg) => void
+      connectedCb?: (this: void, arg: eventmon.IStaConnectedArg) => void
     ): void;
 
     /**
@@ -533,13 +529,13 @@ declare namespace wifi {
      * in the function [`wifi.setmode()`](#wifisetmode) for more details.
      * @see wifi.sta.config()
      * @see wifi.sta.connect()
-     * @param disconnected_cb
+     * @param disconnectedCb
      */
     function disconnect(
-      disconnected_cb?: (this: void, arg: eventmon.StaDisconnectedArg) => void
+      disconnectedCb?: (this: void, arg: eventmon.IStaDisconnectedArg) => void
     ): void;
 
-    interface GetAPConfig {
+    interface IGetAPConfig {
       /** SSID == undefined, don't filter SSID */
       ssid?: string;
       /** BSSID == undefined, don't filter BSSID */
@@ -553,13 +549,13 @@ declare namespace wifi {
     /**
      * old format (SSID : Authmode, RSSI, BSSID, Channel), any duplicate SSIDs will be discarded
      */
-    interface OldAPList {
+    interface IOldAPList {
       [ssid: string]: string;
     }
     /**
      * new format (BSSID : SSID, RSSI, Authmode, Channel)
      */
-    interface APList {
+    interface IAPList {
       [bssid: string]: string;
     }
     /**
@@ -569,24 +565,24 @@ declare namespace wifi {
      * @param callback
      * @todo supply example
      */
-    function getap(callback: (this: void, aplist: OldAPList) => void): void;
+    function getap(callback: (this: void, aplist: IOldAPList) => void): void;
     function getap(
       format: 0,
-      callback: (this: void, aplist: OldAPList) => void
+      callback: (this: void, aplist: IOldAPList) => void
     ): void;
     function getap(
       format: 1,
-      callback: (this: void, aplist: APList) => void
+      callback: (this: void, aplist: IAPList) => void
     ): void;
     function getap(
-      cfg: GetAPConfig,
+      cfg: IGetAPConfig,
       format: 0,
-      callback: (this: void, aplist: OldAPList) => void
+      callback: (this: void, aplist: IOldAPList) => void
     ): void;
     function getap(
-      cfg: GetAPConfig,
+      cfg: IGetAPConfig,
       format: 1,
-      callback: (this: void, aplist: APList) => void
+      callback: (this: void, aplist: IAPList) => void
     ): void;
 
     /**
@@ -600,7 +596,7 @@ declare namespace wifi {
      */
     function getapindex(): number;
 
-    interface APInfo {
+    interface IAPInfo {
       /** quantity of APs returned */
       qty: number;
       /**
@@ -651,7 +647,7 @@ declare namespace wifi {
      *   }
      * }
      */
-    function getapinfo(): APInfo;
+    function getapinfo(): IAPInfo;
 
     /**
      * Gets the broadcast address in station mode.
@@ -675,7 +671,7 @@ declare namespace wifi {
      *   )
      * );
      */
-    function getconfig(returnObject: true): CurrentWifiConfig;
+    function getconfig(returnObject: true): ICurrentWifiConfig;
     /**
      * Gets the WiFi station configuration in the old format.
      * @param returnObject returns data in a table
@@ -701,7 +697,7 @@ declare namespace wifi {
      * @see wifi.sta.getconfig()
      * @param returnObject
      */
-    function getdefaultconfig(returnObject: true): CurrentWifiConfig;
+    function getdefaultconfig(returnObject: true): ICurrentWifiConfig;
     /**
      * Gets the default WiFi station configuration stored in flash in the old format.
      * @see wifi.sta.getconfig()
@@ -844,7 +840,7 @@ declare namespace wifi {
   }
   namespace eventmon {
     /** Station is connected to access point. */
-    interface StaConnectedArg {
+    interface IStaConnectedArg {
       /** SSID of access point. */
       SSID: string;
       /** BSSID of access point. */
@@ -853,7 +849,7 @@ declare namespace wifi {
       channel: number;
     }
     /** Station was disconnected from access point. */
-    interface StaDisconnectedArg {
+    interface IStaDisconnectedArg {
       /** SSID of access point. */
       SSID: string;
       /** BSSID of access point. */
@@ -862,14 +858,14 @@ declare namespace wifi {
       reason: wifi.eventmon.reason;
     }
     /** Access point has changed authorization mode. */
-    interface StaAuthmodeChangeArg {
+    interface IStaAuthmodeChangeArg {
       /** Old wifi authorization mode. */
       old_auth_mode: number;
       /** New wifi authorization mode. */
       new_auth_mode: number;
     }
     /** Station got an IP address. */
-    interface StaGotIpArg {
+    interface IStaGotIpArg {
       /** The IP address assigned to the station. */
       IP: string;
       /** Subnet mask. */
@@ -877,47 +873,45 @@ declare namespace wifi {
       /** The IP address of the access point the station is connected to. */
       gateway: string;
     }
-    /** Station DHCP request has timed out. */
-    interface StaDhcpTimeoutArg {}
     /** A new client has connected to the access point. */
-    interface ApStaConnectedArg {
+    interface IApStaConnectedArg {
       /** MAC address of client that has connected. */
       MAC: string;
       /** SDK provides no details concerning this return value. */
       AID: string;
     }
     /** A client has disconnected from the access point. */
-    interface ApStaDisconnectedArg {
+    interface IApStaDisconnectedArg {
       /** MAC address of client that has disconnected. */
       MAC: string;
       /** SDK provides no details concerning this return value. */
       AID: string;
     }
     /** A probe request was received. */
-    interface ApProbeReqRecvedArg {
+    interface IApProbeReqRecvedArg {
       /** MAC address of the client that is probing the access point. */
       MAC: string;
       /** Received Signal Strength Indicator of client. */
       RSSI: number;
     }
     /** WiFi mode has changed. */
-    interface WifiModeChangedArg {
+    interface IWifiModeChangedArg {
       /** Old WiFi mode. */
       old_mode: WifiMode;
       /** New WiFi mode. */
       new_mode: WifiMode;
     }
 
-    interface RegisterCBMap {
-      [eventmon.STA_CONNECTED]: StaConnectedArg;
-      [eventmon.STA_DISCONNECTED]: StaDisconnectedArg;
-      [eventmon.STA_AUTHMODE_CHANGE]: StaAuthmodeChangeArg;
-      [eventmon.STA_GOT_IP]: StaGotIpArg;
-      [eventmon.STA_DHCP_TIMEOUT]: StaDhcpTimeoutArg;
-      [eventmon.AP_STACONNECTED]: ApStaConnectedArg;
-      [eventmon.AP_STADISCONNECTED]: ApStaDisconnectedArg;
-      [eventmon.AP_PROBEREQRECVED]: ApProbeReqRecvedArg;
-      [eventmon.WIFI_MODE_CHANGED]: WifiModeChangedArg;
+    interface IRegisterCBMap {
+      [eventmon.STA_CONNECTED]: IStaConnectedArg;
+      [eventmon.STA_DISCONNECTED]: IStaDisconnectedArg;
+      [eventmon.STA_AUTHMODE_CHANGE]: IStaAuthmodeChangeArg;
+      [eventmon.STA_GOT_IP]: IStaGotIpArg;
+      [eventmon.STA_DHCP_TIMEOUT]: {};
+      [eventmon.AP_STACONNECTED]: IApStaConnectedArg;
+      [eventmon.AP_STADISCONNECTED]: IApStaDisconnectedArg;
+      [eventmon.AP_PROBEREQRECVED]: IApProbeReqRecvedArg;
+      [eventmon.WIFI_MODE_CHANGED]: IWifiModeChangedArg;
     }
 
     /**
@@ -969,7 +963,7 @@ declare namespace wifi {
      */
     function register<T extends eventmon>(
       event: T,
-      callback: (this: void, arg: RegisterCBMap[T]) => void
+      callback: (this: void, arg: IRegisterCBMap[T]) => void
     ): void;
 
     /**

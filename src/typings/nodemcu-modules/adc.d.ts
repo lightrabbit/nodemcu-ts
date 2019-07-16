@@ -1,3 +1,4 @@
+// tslint:disable: no-namespace
 /**
  * The ADC module provides access to the in-built ADC.
  *
