@@ -1,10 +1,8 @@
-var udpSocket = net.createUDPSocket();
-udpSocket.listen(5000);
-udpSocket.on("receive", (s, data, port, ip) => {
-  print(`received '${data}' from ${ip}:${port}`);
-  s.send(port, ip, "echo: " + data);
+// a simple http server
+var srv = net.createServer(net.SocketType.TCP);
+srv.listen(80, conn => {
+  conn.on("receive", (sck, payload) => {
+    print(payload);
+    sck.send("<h1> Hello, NodeMcu.</h1>");
+  });
 });
-var [port, ip] = udpSocket.getaddr();
-print(`local UDP socket address / port: ${ip}:${port}`);
-udpSocket.dns("www.nodemcu.com", (_conn, ip) => print(ip));
-print("aaa".length);
