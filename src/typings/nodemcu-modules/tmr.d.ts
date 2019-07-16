@@ -19,8 +19,11 @@
 declare namespace tmr {
   /** @compileMembersOnly */
   enum Mode {
+    /** a one-shot alarm (and no need to call `unregister()`) */
     ALARM_SINGLE = 0,
+    /** automatically repeating alarm */
     ALARM_AUTO = 1,
+    /** manually repeating alarm (call `start()` to restart) */
     ALARM_SEMI = 2
   }
   /**
