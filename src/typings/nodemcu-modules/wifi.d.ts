@@ -4,14 +4,14 @@
  */
 declare namespace wifi {
   /** @compileMembersOnly */
-  const enum AuthMode {
+  enum AuthMode {
     OPEN = 0,
     WPA_PSK = 2,
     WPA2_PSK = 3,
     WPA_WPA2_PSK = 4
   }
   /** @compileMembersOnly */
-  const enum CountryPolicy {
+  enum CountryPolicy {
     /**
      * Country policy is auto, NodeMCU will use the country info provided by AP that
      * the station is connected to.
@@ -35,7 +35,7 @@ declare namespace wifi {
    * |Rx 802.11n, 1024 bytes packet length, -65dBm |      56 mA        |
    * @compileMembersOnly
    */
-  const enum PhysicalMode {
+  enum PhysicalMode {
     /** 802.11b, more range, low Transfer rate, more current draw */
     PHYMODE_B = 1,
     /** 802.11g, medium range, medium transfer rate, medium current draw */
@@ -44,7 +44,7 @@ declare namespace wifi {
     PHYMODE_N = 3
   }
   /** @compileMembersOnly */
-  const enum SleepMode {
+  enum SleepMode {
     /** to keep the modem on at all times */
     NONE_SLEEP = 0,
     /** to allow the CPU to power down under some circumstances */
@@ -55,7 +55,7 @@ declare namespace wifi {
   /**
    * @compileMembersOnly
    */
-  const enum StationStatus {
+  enum StationStatus {
     STA_IDLE = 0,
     STA_CONNECTING = 1,
     STA_WRONGPWD = 2,
@@ -72,7 +72,7 @@ declare namespace wifi {
     Suspended = 2
   }
   /** @compileMembersOnly */
-  const enum WifiMode {
+  enum WifiMode {
     /**
      * changing WiFi mode to NULL_MODE will put wifi into a low power state similar
      * to MODEM_SLEEP, provided `wifi.nullmodesleep(false)` has not been called.

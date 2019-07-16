@@ -15,8 +15,8 @@
 declare namespace adc {
   /** @compileMembersOnly */
   enum Mode {
-    INIT_ADC,
-    INIT_VDD33
+    INIT_ADC = 0,
+    INIT_VDD33 = 255
   }
   /**
    * Checks and if necessary reconfigures the ADC mode setting in the ESP init

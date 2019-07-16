@@ -8,9 +8,18 @@ declare namespace node {
   type GPIO_PIN = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
   /** @compileMembersOnly */
-  const enum CpuFreq {
+  enum CpuFreq {
     CPU80MHZ = 80,
-    CPU160MHZ = 160,
+    CPU160MHZ = 160
+  }
+
+  /** @compileMembersOnly */
+  enum InterruptType {
+    INT_UP = 1,
+    INT_DOWN = 2,
+    INT_BOTH = 3,
+    INT_LOW = 4,
+    INT_HIGH = 5
   }
 
   /**
@@ -277,14 +286,6 @@ declare namespace node {
    * @param speed
    */
   function setcpufreq(speed: CpuFreq): CpuFreq;
-
-  const enum InterruptType {
-    INT_UP = 1,
-    INT_DOWN = 2,
-    INT_BOTH = 3,
-    INT_LOW = 4,
-    INT_HIGH = 5,
-  }
 
   interface ISleepConfig {
     /**

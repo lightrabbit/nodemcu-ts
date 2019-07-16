@@ -40,7 +40,7 @@
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
     "typescript": "^3.1.1",
-    "typescript-to-lua": "^0.23.0"
+    "typescript-to-lua": "^0.24.0"
   },
   "engines": {
     "node": ">=10.0.0"
