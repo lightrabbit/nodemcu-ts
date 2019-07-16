@@ -1,8 +1,9 @@
 /** @noSelf */
 declare namespace net {
-  const enum SocketType {
+  /** @compileMembersOnly */
+  enum SocketType {
     TCP = 1,
-    UDP = 2,
+    UDP = 2
   }
 
   type EventCallback<T> = (this: void, sck: T) => void;
@@ -109,13 +110,13 @@ declare namespace net {
      *   });
      * }
      */
-    listen(connectionHandler: EventCallback<this>): void;
-    listen(ip: string, connectionHandler: EventCallback<this>): void;
-    listen(port: number, connectionHandler: EventCallback<this>): void;
+    listen(connectionHandler: EventCallback<Socket>): void;
+    listen(ip: string, connectionHandler: EventCallback<Socket>): void;
+    listen(port: number, connectionHandler: EventCallback<Socket>): void;
     listen(
       port: number,
       ip: string,
-      connectionHandler: EventCallback<this>
+      connectionHandler: EventCallback<Socket>
     ): void;
 
     /**
@@ -200,10 +201,10 @@ declare namespace net {
      * });
      * srv.connect(80, "httpbin.org");
      */
-    on(event: 'connection', cb: EventCallback<this> | null): void;
-    on(event: 'reconnection', cb: ErrorEventCallback<this> | null): void;
-    on(event: 'disconnection', cb: ErrorEventCallback<this> | null): void;
-    on(event: 'sent', cb: EventCallback<this> | null): void;
+    on(event: "connection", cb: EventCallback<this> | null): void;
+    on(event: "reconnection", cb: ErrorEventCallback<this> | null): void;
+    on(event: "disconnection", cb: ErrorEventCallback<this> | null): void;
+    on(event: "sent", cb: EventCallback<this> | null): void;
     /**
      * Register callback functions for receive data event.
      *
@@ -225,7 +226,7 @@ declare namespace net {
      *   }
      * });
      */
-    on(event: 'receive', cb: TCPReceiveEventCallback | null): void;
+    on(event: "receive", cb: TCPReceiveEventCallback | null): void;
 
     /**
      * Sends data to remote peer.
@@ -328,9 +329,9 @@ declare namespace net {
      * @param event string, which can be `receive` or `sent` or `dns`
      * @param cb callback function. Can be `undefined` to remove callback.
      */
-    on(event: 'sent', cb: EventCallback<this> | null): void;
-    on(event: 'receive', cb: UDPReceiveEventCallback | null): void;
-    on(event: 'dns', cb: DnsEventCallback<this> | null): void;
+    on(event: "sent", cb: EventCallback<this> | null): void;
+    on(event: "receive", cb: UDPReceiveEventCallback | null): void;
+    on(event: "dns", cb: DnsEventCallback<this> | null): void;
 
     /**
      * Sends data to specific remote peer.
