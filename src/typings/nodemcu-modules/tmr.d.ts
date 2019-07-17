@@ -24,7 +24,7 @@ declare namespace tmr {
     /** automatically repeating alarm */
     ALARM_AUTO = 1,
     /** manually repeating alarm (call `start()` to restart) */
-    ALARM_SEMI = 2
+    ALARM_SEMI = 2,
   }
   /**
    * Creates a dynamic timer object; see below for its method table.
@@ -208,7 +208,7 @@ declare namespace tmr {
      *   print("timer not stopped, not registered?");
      * }
      */
-    stop():boolean;
+    stop(): boolean;
 
     /**
      * Stops the timer (if running) and unregisters the associated callback.

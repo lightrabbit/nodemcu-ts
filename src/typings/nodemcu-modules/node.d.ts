@@ -10,7 +10,7 @@ declare namespace node {
   /** @compileMembersOnly */
   enum CpuFreq {
     CPU80MHZ = 80,
-    CPU160MHZ = 160
+    CPU160MHZ = 160,
   }
 
   /** @compileMembersOnly */
@@ -19,7 +19,7 @@ declare namespace node {
     INT_DOWN = 2,
     INT_BOTH = 3,
     INT_LOW = 4,
-    INT_HIGH = 5
+    INT_HIGH = 5,
   }
 
   /**

@@ -9,7 +9,7 @@ declare namespace wifi {
     OPEN = 0,
     WPA_PSK = 2,
     WPA2_PSK = 3,
-    WPA_WPA2_PSK = 4
+    WPA_WPA2_PSK = 4,
   }
   /** @compileMembersOnly */
   enum CountryPolicy {
@@ -22,7 +22,7 @@ declare namespace wifi {
      */
     COUNTRY_AUTO = 0,
     /** Country policy is manual, NodeMCU will use locally configured country info. */
-    COUNTRY_MANUAL = 1
+    COUNTRY_MANUAL = 1,
   }
   /**
    * Information from the Espressif datasheet v4.3
@@ -42,7 +42,7 @@ declare namespace wifi {
     /** 802.11g, medium range, medium transfer rate, medium current draw */
     PHYMODE_G = 2,
     /** 802.11n, least range, fast transfer rate, least current draw (STATION ONLY) */
-    PHYMODE_N = 3
+    PHYMODE_N = 3,
   }
   /** @compileMembersOnly */
   enum SleepMode {
@@ -51,7 +51,7 @@ declare namespace wifi {
     /** to allow the CPU to power down under some circumstances */
     LIGHT_SLEEP = 1,
     /** to power down the modem as much as possible */
-    MODEM_SLEEP = 2
+    MODEM_SLEEP = 2,
   }
   /**
    * @compileMembersOnly
@@ -62,7 +62,7 @@ declare namespace wifi {
     STA_WRONGPWD = 2,
     STA_APNOTFOUND = 3,
     STA_FAIL = 4,
-    STA_GOTIP = 5
+    STA_GOTIP = 5,
   }
   /**
    * @see wifi.suspend()
@@ -70,7 +70,7 @@ declare namespace wifi {
   const enum SuspendState {
     Awake = 0,
     Pending = 1,
-    Suspended = 2
+    Suspended = 2,
   }
   /** @compileMembersOnly */
   enum WifiMode {
@@ -97,7 +97,7 @@ declare namespace wifi {
      * changing WiFi mode to NULL_MODE will put wifi into a low power state similar
      * to MODEM_SLEEP, provided `wifi.nullmodesleep(false)` has not been called.
      */
-    STATIONAP = 3
+    STATIONAP = 3,
   }
 
   interface ICountryInfo {
@@ -462,7 +462,7 @@ declare namespace wifi {
       /**
        * Station DHCP request has timed out. (Optional)
        */
-      dhcp_timeout_cb?: (this: void, arg: eventmon.IStaDhcpTimeoutArg) => void;
+      dhcp_timeout_cb?: (this: void, arg: {}) => void;
     }
     /**
      * Sets the WiFi station configuration.
@@ -836,7 +836,7 @@ declare namespace wifi {
     AP_STACONNECTED = 5,
     AP_STADISCONNECTED = 6,
     AP_PROBEREQRECVED = 7,
-    WIFI_MODE_CHANGED = 8
+    WIFI_MODE_CHANGED = 8,
   }
   namespace eventmon {
     /** Station is connected to access point. */
@@ -983,7 +983,7 @@ declare namespace wifi {
       DISASSOC_SUPCHAN_BAD = 11,
       IE_INVALID = 13,
       MIC_FAILURE = 14,
-      "4WAY_HANDSHAKE_TIMEOUT" = 15,
+      '4WAY_HANDSHAKE_TIMEOUT' = 15,
       GROUP_KEY_UPDATE_TIMEOUT = 16,
       IE_IN_4WAY_DIFFERS = 17,
       GROUP_CIPHER_INVALID = 18,
@@ -991,13 +991,13 @@ declare namespace wifi {
       AKMP_INVALID = 20,
       UNSUPP_RSN_IE_VERSION = 21,
       INVALID_RSN_IE_CAP = 22,
-      "802_1X_AUTH_FAILED" = 23,
+      '802_1X_AUTH_FAILED' = 23,
       CIPHER_SUITE_REJECTED = 24,
       BEACON_TIMEOUT = 200,
       NO_AP_FOUND = 201,
       AUTH_FAIL = 202,
       ASSOC_FAIL = 203,
-      HANDSHAKE_TIMEOUT = 204
+      HANDSHAKE_TIMEOUT = 204,
     }
   }
 }

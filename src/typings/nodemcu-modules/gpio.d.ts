@@ -29,17 +29,17 @@ declare namespace gpio {
     INPUT = 0,
     OUTPUT = 1,
     INT = 2,
-    OPENDRAIN = 3
+    OPENDRAIN = 3,
   }
   /** @compileMembersOnly */
   enum Pull {
     FLOAT = 0,
-    PULLUP = 1
+    PULLUP = 1,
   }
   /** @compileMembersOnly */
   enum Value {
     LOW = 0,
-    HIGH = 1
+    HIGH = 1,
   }
   /**
    * Initialize pin to GPIO mode, set the pin in/out direction, and optional internal weak pull-up.
@@ -113,14 +113,14 @@ declare namespace gpio {
     callback?: (this: void) => void
   ): void;
   const enum TrigType {
-    up = "up",
-    down = "down",
-    both = "both",
-    low = "low",
-    high = "high",
-    none = "none"
+    up = 'up',
+    down = 'down',
+    both = 'both',
+    low = 'low',
+    high = 'high',
+    none = 'none',
   }
-  type TrigTypeConst = "up" | "down" | "both" | "low" | "high" | "none";
+  type TrigTypeConst = 'up' | 'down' | 'both' | 'low' | 'high' | 'none';
   type TrigCallback =
     /**
      * @param level The level of the specified pin at the interrupt
