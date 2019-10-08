@@ -163,4 +163,12 @@ declare namespace gpio {
     type?: TrigType | TrigTypeConst,
     callback?: TrigCallback
   ): void;
+
+  /**
+   * Set digital GPIO pin value.
+   *
+   * @param pin pin to write, IO index
+   * @param level `gpio.Value.HIGH` or `gpio.Value.LOW`
+   */
+  function write(pin: PIN, level: gpio.Value): void;
 }

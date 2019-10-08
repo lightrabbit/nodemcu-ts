@@ -15,6 +15,7 @@
  *   NodeMCU formerly provided 7 static timers, numbered 0-6, which could be
  *   used instead of OO API timers initiated with [`tmr.create()`](#tmrcreate).
  *   After a long period of deprecation, these were removed in 2019 Q1.
+ * @noSelf
  */
 declare namespace tmr {
   /** @compileMembersOnly */
